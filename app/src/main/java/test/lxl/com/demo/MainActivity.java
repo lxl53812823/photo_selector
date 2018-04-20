@@ -93,4 +93,9 @@ public class MainActivity extends Activity implements PermissionListener, Pictur
     public void pictureSelectListener(int position) {
 
     }
+
+    @Override
+    public void pictureClickListener(int position) {
+
+    }
 }

@@ -13,28 +13,34 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
+
 import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 
 public class SelectPictureActivity extends AppCompatActivity implements View.OnClickListener, PictureScanAdapter.OnPictureSelectListener {
     private RecyclerView recyclerView;
     private PictureScanAdapter adapter;
-    private List<PictureSelectBean> list = new ArrayList<>();
-    private List<PictureSelectBean> selectList = new ArrayList<>();
+    private ArrayList<PictureSelectBean> list = new ArrayList<>();
+    private ArrayList<PictureSelectBean> selectList = new ArrayList<>();
     private TextView tipsTV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (!EventBus.getDefault().isRegistered(this))
+            EventBus.getDefault().register(this);
         setContentView(R.layout.activity_relativelayout);
         recyclerView = findViewById(R.id.rv);
         tipsTV = findViewById(R.id.tips_tv);
         findViewById(R.id.back_tv).setOnClickListener(this);
-        findViewById(R.id.cancel_tv).setOnClickListener(this);
         findViewById(R.id.confirm_btn).setOnClickListener(this);
 
         HashMap<String, Integer> map = new HashMap<>();
@@ -58,12 +64,9 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.back_tv:
-
+                finish();
                 break;
 
-            case R.id.cancel_tv:
-
-                break;
 
             case R.id.confirm_btn:
                 Intent intent = new Intent();
@@ -95,6 +98,9 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
                         list.add(bean);
                 }
                 Collections.reverse(list);
+                for (int i = 0; i < list.size(); i++) {
+                    list.get(i).setIndex(i);
+                }
                 handler.sendEmptyMessage(0);
             }
         }).start();
@@ -124,12 +130,12 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
                 if (index != -1) {
                     selectList.remove(index);
                     list.get(position).setSelected(false);
-                    list.get(position).setIndex(-1);
+                    list.get(position).setSelectIndex(-1);
                     for (int i = 0; i < selectList.size(); i++) {
                         int findIndex = list.indexOf(selectList.get(i));
                         if (findIndex == -1)
                             return;
-                        list.get(findIndex).setIndex(i + 1);
+                        list.get(findIndex).setSelectIndex(i + 1);
                     }
                 } else {
 
@@ -140,7 +146,7 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
                     }
                     selectList.add(list.get(position));
                     list.get(position).setSelected(true);
-                    list.get(position).setIndex(selectList.size());
+                    list.get(position).setSelectIndex(selectList.size());
                 }
                 handler.sendEmptyMessage(1);
             }
@@ -149,4 +155,54 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
 
     }
 
+    @Override
+    public void pictureClickListener(int position) {
+        Intent intent = new Intent(this, SelectPicturesPreviewActivity.class);
+        intent.putExtra("all_list", (Serializable) list);
+        intent.putExtra("select_list", (Serializable) selectList);
+        intent.putExtra("index", position);
+        startActivityForResult(intent, 100);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onMessageEvent(final PictureSelectBean bean) {
+        if (bean != null) {
+            if (bean.isSelected()) {
+                list.get(bean.getIndex()).setSelected(true);
+                list.get(bean.getIndex()).setSelectIndex(selectList.size() + 1);
+                selectList.add(list.get(bean.getIndex()));
+            } else {
+                list.get(bean.getIndex()).setSelected(false);
+                list.get(bean.getIndex()).setSelectIndex(-1);
+
+//                for (PictureSelectBean b : selectList) {
+//                    if (b.getIndex() == bean.getIndex())
+//                        selectList.remove(b);
+//                }
+
+                Iterator<PictureSelectBean> it = selectList.iterator();
+                while (it.hasNext()) {
+                    PictureSelectBean b = it.next();
+                    if (b.getIndex() == bean.getIndex())
+                        it.remove();
+                }
+
+                for (int i = 0; i < selectList.size(); i++) {
+                    int scanIndex = list.indexOf(selectList.get(i));
+                    if (scanIndex != -1) {
+                        list.get(scanIndex).setSelectIndex(i + 1);
+                    }
+                }
+
+            }
+            adapter.notifyDataSetChanged();
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+    }
 }

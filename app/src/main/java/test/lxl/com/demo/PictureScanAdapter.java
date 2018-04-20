@@ -47,7 +47,7 @@ public class PictureScanAdapter extends RecyclerView.Adapter {
         });
         if (list.get(position).isSelected()) {
             viewHolder.tv.setBackgroundResource(R.drawable.bg_red_circle);
-            viewHolder.tv.setText(list.get(position).getIndex() + "");
+            viewHolder.tv.setText(list.get(position).getSelectIndex() + "");
         } else {
             viewHolder.tv.setBackgroundResource(R.mipmap.ic_xztp_al);
             viewHolder.tv.setText("");
@@ -67,6 +67,13 @@ public class PictureScanAdapter extends RecyclerView.Adapter {
             super(itemView);
             imageView = itemView.findViewById(R.id.img);
             tv = itemView.findViewById(R.id.radio_btn);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onPictureSelectListener != null)
+                        onPictureSelectListener.pictureClickListener(getLayoutPosition());
+                }
+            });
         }
     }
 
@@ -78,5 +85,6 @@ public class PictureScanAdapter extends RecyclerView.Adapter {
 
     public interface OnPictureSelectListener {
         void pictureSelectListener(int position);
+        void pictureClickListener(int position);
     }
 }

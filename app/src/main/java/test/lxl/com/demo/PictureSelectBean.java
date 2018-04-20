@@ -11,8 +11,26 @@ public class PictureSelectBean implements Serializable {
     private String path;
     private String name;
     private int index;
+    private int selectIndex;
     private String url;
     private boolean isSelected;
+    private boolean previewSelected;
+
+    public int getSelectIndex() {
+        return selectIndex;
+    }
+
+    public void setSelectIndex(int selectIndex) {
+        this.selectIndex = selectIndex;
+    }
+
+    public boolean isPreviewSelected() {
+        return previewSelected;
+    }
+
+    public void setPreviewSelected(boolean previewSelected) {
+        this.previewSelected = previewSelected;
+    }
 
     public boolean isSelected() {
         return isSelected;
