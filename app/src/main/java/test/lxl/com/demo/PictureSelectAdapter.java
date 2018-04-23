@@ -39,7 +39,7 @@ public class PictureSelectAdapter extends RecyclerView.Adapter {
             ((PictureViewHolder) holder).imageView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorAccent));
         else
             ((PictureViewHolder) holder).imageView.setBackgroundColor(ContextCompat.getColor(context, R.color.transparent));
-        Glide.with(context).load(list.get(position).getPath()).into(((PictureViewHolder) holder).imageView);
+        GlideImageUtil.loadThumbnail(context,list.get(position).getPath(),((PictureViewHolder) holder).imageView);
     }
 
     @Override
@@ -53,6 +53,23 @@ public class PictureSelectAdapter extends RecyclerView.Adapter {
         public PictureViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.img);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onPicturePreviewClickListener != null)
+                        onPicturePreviewClickListener.picturePreviewClickListener(getLayoutPosition());
+                }
+            });
         }
+    }
+
+    private OnPicturePreviewClickListener onPicturePreviewClickListener;
+
+    public void setOnPicturePreviewClickListener(OnPicturePreviewClickListener onPicturePreviewClickListener) {
+        this.onPicturePreviewClickListener = onPicturePreviewClickListener;
+    }
+
+    public interface OnPicturePreviewClickListener {
+        void picturePreviewClickListener(int position);
     }
 }

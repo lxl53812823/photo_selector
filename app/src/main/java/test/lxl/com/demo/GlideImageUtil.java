@@ -337,4 +337,19 @@ public final class GlideImageUtil {
         }
 
     }
+
+    public static void loadThumbnail(Context context, Object url, ImageView imageView) {
+        try {
+            Glide.with(context.getApplicationContext())
+                    .load(url)
+                    .thumbnail(0.05f)
+                    .placeholder(LOADING_PLACE_HOLDER)
+                    .error(FAILED_PLACE_HOLDER)
+                    .dontAnimate()
+                    .into(imageView);
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+        }
+    }
 }
