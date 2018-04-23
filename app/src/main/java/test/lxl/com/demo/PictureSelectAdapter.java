@@ -53,6 +53,24 @@ public class PictureSelectAdapter extends RecyclerView.Adapter {
         public PictureViewHolder(View itemView) {
             super(itemView);
             imageView = itemView.findViewById(R.id.img);
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (onPicturePreviewClickListener != null)
+                        onPicturePreviewClickListener.picturePreviewClickListener(getLayoutPosition());
+                }
+            });
         }
+    }
+
+
+    private OnPicturePreviewClickListener onPicturePreviewClickListener;
+
+    public void setOnPicturePreviewClickListener(OnPicturePreviewClickListener onPicturePreviewClickListener) {
+        this.onPicturePreviewClickListener = onPicturePreviewClickListener;
+    }
+
+    public interface OnPicturePreviewClickListener {
+        void picturePreviewClickListener(int position);
     }
 }

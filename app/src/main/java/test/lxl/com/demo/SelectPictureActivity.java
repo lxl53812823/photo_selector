@@ -195,7 +195,7 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
                 }
 
             }
-            adapter.notifyDataSetChanged();
+            handler.sendEmptyMessage(0);
         }
 
     }
