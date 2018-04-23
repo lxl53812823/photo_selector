@@ -34,7 +34,7 @@ import test.lxl.com.demo.photoview.ImageViewPager;
  */
 
 public class SelectPicturesPreviewActivity extends Activity implements View.OnClickListener,
-        ViewPager.OnPageChangeListener, Runnable,PictureSelectAdapter.OnPicturePreviewClickListener {
+        ViewPager.OnPageChangeListener, Runnable {
     private ImageView backImg;
     private TextView stateTV;
     private ImageViewPager pager;
@@ -71,9 +71,6 @@ public class SelectPicturesPreviewActivity extends Activity implements View.OnCl
         adapter = new PictureSelectAdapter(this, selectList);
         recyclerView.setAdapter(adapter);
         singleThreadPool = Executors.newSingleThreadExecutor();
-
-        pager.setJumpFast(true);
-        adapter.setOnPicturePreviewClickListener(this);
         if (allList != null && allList.size() != 0) {
             viewPagerAdapter = new ViewPagerAdapter();
             pager.setAdapter(viewPagerAdapter);
@@ -171,11 +168,6 @@ public class SelectPicturesPreviewActivity extends Activity implements View.OnCl
             recyclerView.scrollToPosition(selectIndex);
         }
     };
-
-    @Override
-    public void picturePreviewClickListener(int position) {
-        pager.setCurrentItem(selectList.get(position).getIndex());
-    }
 
     public class ViewPagerAdapter extends PagerAdapter {
 

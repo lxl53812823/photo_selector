@@ -9,7 +9,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SimpleItemAnimator;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -32,6 +31,7 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
     private ArrayList<PictureSelectBean> list = new ArrayList<>();
     private ArrayList<PictureSelectBean> selectList = new ArrayList<>();
     private TextView tipsTV;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,7 +50,6 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
         map.put(RecyclerViewSpacesItemDecoration.BOTTOM_DECORATION, 2);
         RecyclerViewSpacesItemDecoration itemDecoration = new RecyclerViewSpacesItemDecoration(map);
         recyclerView.addItemDecoration(itemDecoration);
-        ((SimpleItemAnimator)recyclerView.getItemAnimator()).setSupportsChangeAnimations(false);
         recyclerView.setLayoutManager(new GridLayoutManager(this, 4));
 
 
@@ -175,6 +174,12 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
             } else {
                 list.get(bean.getIndex()).setSelected(false);
                 list.get(bean.getIndex()).setSelectIndex(-1);
+
+//                for (PictureSelectBean b : selectList) {
+//                    if (b.getIndex() == bean.getIndex())
+//                        selectList.remove(b);
+//                }
+
                 Iterator<PictureSelectBean> it = selectList.iterator();
                 while (it.hasNext()) {
                     PictureSelectBean b = it.next();
@@ -190,7 +195,7 @@ public class SelectPictureActivity extends AppCompatActivity implements View.OnC
                 }
 
             }
-          handler.sendEmptyMessage(0);
+            adapter.notifyDataSetChanged();
         }
 
     }

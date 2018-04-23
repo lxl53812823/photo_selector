@@ -36,7 +36,7 @@ public class PictureScanAdapter extends RecyclerView.Adapter {
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         PictureViewHolder viewHolder = (PictureViewHolder) holder;
-        GlideImageUtil.loadThumbnail(context,list.get(position).getPath(),viewHolder.imageView);
+        Glide.with(context).load(list.get(position).getPath()).thumbnail(0.3f).into(viewHolder.imageView);
         viewHolder.tv.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
